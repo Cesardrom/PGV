@@ -316,6 +316,7 @@ pstree -p | head -n 50
 **Salida (recorta):**
 
 ```text
+<<<<<<< HEAD
 systemd(1)-+-ModemManager(1851)-+-{ModemManager}(1861)
            |                    |-{ModemManager}(1864)
            |                    `-{ModemManager}(1866)
@@ -354,11 +355,17 @@ systemd(1)-+-ModemManager(1851)-+-{ModemManager}(1861)
            |                  |-{containerd}(2057)
            |                  |-{containerd}(2058)
            |                  `-{containerd}(2526)
+=======
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
 
 ```
 **Pregunta:** ¿Bajo qué proceso aparece tu `systemd --user`?  
 
+<<<<<<< HEAD
 **Respuesta:** Aparece bajo la shell de el usuario.
+=======
+**Respuesta:**
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
 
 ---
 
@@ -370,6 +377,7 @@ ps -eo pid,ppid,stat,cmd | head -n 20
 **Salida:**
 
 ```text
+<<<<<<< HEAD
 PID    PPID STAT CMD
       1       0 Ss   /sbin/init splash
       2       0 S    [kthreadd]
@@ -396,6 +404,13 @@ PID    PPID STAT CMD
 **Respuesta:** R= Running  es un proceso que esta en ejecucion
 S= Sleeping  Es un proceso dormido, está esperando a un evento para activarse
 Z= Zombie  Es un proceso que ha terminado pero su proceso padre no ha recolectado la informacion sobre su finalizacion.
+=======
+
+```
+**Pregunta:** Explica 3 flags de `STAT` que veas (ej.: `R`, `S`, `T`, `Z`, `+`).  
+
+**Respuesta:**
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
 
 ---
 
@@ -417,6 +432,7 @@ ps -o pid,stat,cmd -p "$pid"
 **Pega los dos estados (antes/después):**
 
 ```text
+<<<<<<< HEAD
  dam  ~  sleep 120 &
 pid=$!
 [1] 98961
@@ -433,11 +449,17 @@ ps -o pid,stat,cmd -p 98961
   98961 S    sleep 120
 
 
+=======
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
 
 ```
 **Pregunta:** ¿Qué flag indicó la suspensión?  
 
+<<<<<<< HEAD
 **Respuesta:** S = Sleeping
+=======
+**Respuesta:**
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
 
 ---
 
@@ -482,6 +504,7 @@ rm -rf "$DAM/bin" "$DAM/logs" "$DAM/units"
 ---
 
 ## ¿Qué estás prácticando?
+<<<<<<< HEAD
 - [X] Pegaste **salidas reales**.  
 - [X] Explicaste **qué significan**.  
 - [X] Usaste **systemd --user** y **journalctl --user**.  
@@ -489,3 +512,15 @@ rm -rf "$DAM/bin" "$DAM/logs" "$DAM/units"
 - [X] Practicaste señales (`STOP`/`CONT`), `pstree`, `ps` y `strace` **sobre tus procesos**.
 
 ## Creado Por César Domínguez Romero
+=======
+- [ ] Pegaste **salidas reales**.  
+- [ ] Explicaste **qué significan**.  
+- [ ] Usaste **systemd --user** y **journalctl --user**.  
+- [ ] Probaste `systemd-run --user` con límites de memoria.  
+- [ ] Practicaste señales (`STOP`/`CONT`), `pstree`, `ps` y `strace` **sobre tus procesos**.
+
+---
+
+## Licencia 📄
+Licencia **Apache 2.0** — ver [LICENSE.md](https://github.com/jpexposito/code-learn-practice/blob/main/LICENSE).
+>>>>>>> 3ca8a9b (Subimos parte de la tarea)
