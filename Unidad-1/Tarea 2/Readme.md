@@ -316,11 +316,49 @@ pstree -p | head -n 50
 **Salida (recorta):**
 
 ```text
+systemd(1)-+-ModemManager(1851)-+-{ModemManager}(1861)
+           |                    |-{ModemManager}(1864)
+           |                    `-{ModemManager}(1866)
+           |-NetworkManager(1819)-+-{NetworkManager}(1856)
+           |                      |-{NetworkManager}(1857)
+           |                      `-{NetworkManager}(1858)
+           |-accounts-daemon(1156)-+-{accounts-daemon}(1190)
+           |                       |-{accounts-daemon}(1191)
+           |                       `-{accounts-daemon}(1820)
+           |-agetty(2231)
+           |-apache2(2283)-+-apache2(2295)
+           |               |-apache2(2296)
+           |               |-apache2(2298)
+           |               |-apache2(2299)
+           |               `-apache2(2300)
+           |-at-spi2-registr(3660)-+-{at-spi2-registr}(3666)
+           |                       |-{at-spi2-registr}(3667)
+           |                       `-{at-spi2-registr}(3668)
+           |-avahi-daemon(1158)---avahi-daemon(1251)
+           |-blkmapd(1105)
+           |-colord(2015)-+-{colord}(2021)
+           |              |-{colord}(2022)
+           |              `-{colord}(2025)
+           |-containerd(2000)-+-{containerd}(2017)
+           |                  |-{containerd}(2018)
+           |                  |-{containerd}(2019)
+           |                  |-{containerd}(2020)
+           |                  |-{containerd}(2024)
+           |                  |-{containerd}(2034)
+           |                  |-{containerd}(2035)
+           |                  |-{containerd}(2042)
+           |                  |-{containerd}(2043)
+           |                  |-{containerd}(2044)
+           |                  |-{containerd}(2052)
+           |                  |-{containerd}(2056)
+           |                  |-{containerd}(2057)
+           |                  |-{containerd}(2058)
+           |                  `-{containerd}(2526)
 
 ```
 **Pregunta:** ¿Bajo qué proceso aparece tu `systemd --user`?  
 
-**Respuesta:**
+**Respuesta:** Aparece bajo la shell de el usuario.
 
 ---
 
@@ -332,11 +370,32 @@ ps -eo pid,ppid,stat,cmd | head -n 20
 **Salida:**
 
 ```text
-
+PID    PPID STAT CMD
+      1       0 Ss   /sbin/init splash
+      2       0 S    [kthreadd]
+      3       2 S    [pool_workqueue_release]
+      4       2 I<   [kworker/R-rcu_g]
+      5       2 I<   [kworker/R-rcu_p]
+      6       2 I<   [kworker/R-slub_]
+      7       2 I<   [kworker/R-netns]
+     10       2 I<   [kworker/0:0H-events_highpri]
+     12       2 I<   [kworker/R-mm_pe]
+     13       2 I    [rcu_tasks_kthread]
+     14       2 I    [rcu_tasks_rude_kthread]
+     15       2 I    [rcu_tasks_trace_kthread]
+     16       2 S    [ksoftirqd/0]
+     17       2 I    [rcu_preempt]
+     18       2 S    [migration/0]
+     19       2 S    [idle_inject/0]
+     20       2 S    [cpuhp/0]
+     21       2 S    [cpuhp/1]
+     22       2 S    [idle_inject/1]
 ```
 **Pregunta:** Explica 3 flags de `STAT` que veas (ej.: `R`, `S`, `T`, `Z`, `+`).  
 
-**Respuesta:**
+**Respuesta:** R= Running  es un proceso que esta en ejecucion
+S= Sleeping  Es un proceso dormido, está esperando a un evento para activarse
+Z= Zombie  Es un proceso que ha terminado pero su proceso padre no ha recolectado la informacion sobre su finalizacion.
 
 ---
 
@@ -358,11 +417,27 @@ ps -o pid,stat,cmd -p "$pid"
 **Pega los dos estados (antes/después):**
 
 ```text
+ dam  ~  sleep 120 &
+pid=$!
+[1] 98961
+ dam  ~  1  kill -STOP 98961
+
+[1]+  Detenido                sleep 120
+
+ps -o pid,stat,cmd -p 98961
+    PID STAT CMD
+  98961 T    sleep 120
+
+ ps -o pid,stat,cmd -p 98961
+    PID STAT CMD
+  98961 S    sleep 120
+
+
 
 ```
 **Pregunta:** ¿Qué flag indicó la suspensión?  
 
-**Respuesta:**
+**Respuesta:** S = Sleeping
 
 ---
 
@@ -407,13 +482,10 @@ rm -rf "$DAM/bin" "$DAM/logs" "$DAM/units"
 ---
 
 ## ¿Qué estás prácticando?
-- [ ] Pegaste **salidas reales**.  
-- [ ] Explicaste **qué significan**.  
-- [ ] Usaste **systemd --user** y **journalctl --user**.  
-- [ ] Probaste `systemd-run --user` con límites de memoria.  
-- [ ] Practicaste señales (`STOP`/`CONT`), `pstree`, `ps` y `strace` **sobre tus procesos**.
+- [X] Pegaste **salidas reales**.  
+- [X] Explicaste **qué significan**.  
+- [X] Usaste **systemd --user** y **journalctl --user**.  
+- [X] Probaste `systemd-run --user` con límites de memoria.  
+- [X] Practicaste señales (`STOP`/`CONT`), `pstree`, `ps` y `strace` **sobre tus procesos**.
 
----
-
-## Licencia 📄
-Licencia **Apache 2.0** — ver [LICENSE.md](https://github.com/jpexposito/code-learn-practice/blob/main/LICENSE).
+## Creado Por César Domínguez Romero
