@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PsHeadServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">procesos-servicios-consola</a> &gt; <a href="index.source.html" class="el_package">com.comandos.services.impl</a> &gt; <span class="el_source">PsHeadServiceImpl.java</span></div><h1>PsHeadServiceImpl.java</h1><pre class="source lang-java linenums">package com.comandos.services.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.comandos.domain.Job;
+import com.comandos.services.abstracts.ComandoServiceAbstract;
+import com.comandos.services.interfaces.PsHeadService;
+
+/**
+ * Implementación del servicio para el comando Ps aux | head.
+ * Extiende ComandoServiceAbstract e implementa PsHeadService para manejar la ejecución del comando ps aux | head.
+ *
+ * @author Cesardrom
+ * @version 1.0
+ * @since 1.0
+ */
+@Service
+public class PsHeadServiceImpl extends ComandoServiceAbstract implements PsHeadService {
+<span class="fc" id="L19">    public PsHeadServiceImpl(){</span>
+<span class="fc" id="L20">        this.setTipo(Job.PS);</span>
+<span class="fc" id="L21">        this.setValidation(&quot;aux|ef&quot;);</span>
+<span class="fc" id="L22">    }</span>
+
+    @Override
+    public void executeCommand(String[] args) {
+<span class="fc" id="L26">        String commandLine = String.join(&quot; &quot;, args);</span>
+<span class="fc" id="L27">        procesarLinea(commandLine);</span>
+<span class="fc" id="L28">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

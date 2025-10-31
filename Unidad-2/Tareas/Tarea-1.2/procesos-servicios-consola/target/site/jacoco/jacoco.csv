@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+procesos-servicios-consola,com.comandos.repositories.file,FileJobRepository,44,4,0,0,10,1,3,1,3,1
+procesos-servicios-consola,com.comandos.services.impl,TopServiceImpl,0,19,0,0,0,7,0,2,0,2
+procesos-servicios-consola,com.comandos.services.impl,PsHeadServiceImpl,0,19,0,0,0,7,0,2,0,2
+procesos-servicios-consola,com.comandos.services.impl,LsofServiceImpl,0,19,0,0,0,7,0,2,0,2
+procesos-servicios-consola,com.comandos.domain,Job,0,21,0,0,0,2,0,1,0,1
+procesos-servicios-consola,com.comandos.controllers,CliControllers,0,48,0,6,0,11,0,5,0,2
+procesos-servicios-consola,com.comandos,ProcesosServiciosApplication,14,0,0,0,6,0,4,0,4,0
+procesos-servicios-consola,com.comandos.services.abstracts,ComandoServiceAbstract,121,137,7,17,34,40,8,20,4,12
