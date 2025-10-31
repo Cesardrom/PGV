@@ -1,0 +1,14 @@
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/ProcesosServiciosApplication.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/domain/Job.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/repositories/file/FileJobRepository.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/controllers/CliControllers.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/repositories/interfaces/IJobRepository.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/interfaces/LsofService.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/impl/LsofServiceImpl.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/impl/PsHeadServiceImpl.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/abstracts/ComandoServiceAbstract.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/interfaces/CommandService.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/ProcCliApplication.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/interfaces/PsHeadService.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/impl/TopServiceImpl.java
+/home/dam/Escritorio/Tarea-comandos-pgv/procesos-servicios-consola/src/main/java/com/comandos/services/interfaces/TopService.java
