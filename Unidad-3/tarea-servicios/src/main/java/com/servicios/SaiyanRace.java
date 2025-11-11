@@ -10,7 +10,7 @@ public class SaiyanRace implements Runnable {
     private String name;
     private int distance = 0;
     private static final int GOAL = 100;
-    private static volatile boolean winnerDeclared = false;
+    private static volatile boolean winnerDeclared = false; // Se utiliza volatile o atomico para que otros objetos de la misma clase puedan ver las variables que tengan esta notacion
 
     public SaiyanRace(String name) {
         this.name = name;
