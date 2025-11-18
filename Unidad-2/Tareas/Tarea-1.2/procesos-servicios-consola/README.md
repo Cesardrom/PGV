@@ -27,6 +27,23 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
   - Define un `CommandLineRunner` que ejecuta el menú de consola al iniciar la aplicación.
   - Inyecta el controlador `CliControllers` para manejar la lógica de la interfaz de usuario.
 
+```java
+@SpringBootApplication
+public class ProcesosServiciosApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ProcesosServiciosApplication.class, args);
+    }
+
+    @Bean
+    CommandLineRunner demo(CliControllers procesos) {
+        return args -> {
+            procesos.menuConsola();
+        };
+    }
+}
+```
+
 ### 2. Controlador de Consola: `CliControllers.java`
 
 - **Ubicación**: `src/main/java/com/comandos/controllers/CliControllers.java`
@@ -37,9 +54,42 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
   - Implementa un menú simple que lee la entrada del usuario y ejecuta el comando correspondiente.
   - Soporta tres comandos principales: LSOF, TOP y PS.
 
+```java
+@Service
+public class CliControllers {
+    @Autowired
+    LsofService lsofService;
+    @Autowired
+    PsHeadService psHeadService;
+    @Autowired
+    TopService topService;
+
+    public void menuConsola(){
+        Scanner scanner = new Scanner (System.in);
+        System.out.println("=== Lanzador de Procesos (CLI) Linux ===\n" +
+                "Comandos:\n" +
+                "  lsof -i\n" +
+                "  top -bn 1\n" +
+                "  ps aux || ef | head \n"
+                );
+        String comando = scanner.nextLine();
+        if (comando.toUpperCase().startsWith("LSOF")){
+            lsofService.executeCommand(comando.split("\\s+"));
+        }
+        if (comando.toUpperCase().startsWith("TOP")){
+            topService.executeCommand(comando.split("\\s+"));
+        }
+        if (comando.toUpperCase().startsWith("PS")){
+            psHeadService.executeCommand(comando.split("\\s+"));
+        }
+    }
+}
+```
+
 ### 3. Servicios de Comandos
 
 #### Interfaz Base: `CommandService.java`
+
 - **Ubicación**: `src/main/java/com/comandos/services/interfaces/CommandService.java`
 - **Función**: Define el contrato base para todos los servicios de comandos.
 - **Método**: `void executeCommand(String[] args)` - Ejecuta un comando con los argumentos proporcionados.
@@ -47,19 +97,72 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
 #### Servicios Específicos:
 
 ##### `LsofService.java` e `LsofServiceImpl.java`
+
 - **Función**: Maneja la ejecución del comando `lsof -i` (lista archivos abiertos de red).
 - **Validación**: Requiere el parámetro `-i`.
 - **Implementación**: Extiende `ComandoServiceAbstract` y valida que el comando comience con "LSOF".
 
+```java
+@Service
+public class LsofServiceImpl extends ComandoServiceAbstract implements LsofService {
+
+    public LsofServiceImpl(){
+        this.setTipo(Job.LSOF);
+        this.setValidation("-i");
+    }
+
+    @Override
+    public void executeCommand(String[] args) {
+        String commandLine = String.join(" ", args);
+        procesarLinea(commandLine);
+    }
+}
+```
+
 ##### `TopService.java` e `TopServiceImpl.java`
+
 - **Función**: Maneja la ejecución del comando `top -bn 1` (muestra procesos del sistema en modo batch).
 - **Validación**: Acepta parámetros como `-bn` seguido de un número opcional.
 - **Implementación**: Extiende `ComandoServiceAbstract` y valida que el comando comience con "TOP".
 
+```java
+@Service
+public class TopServiceImpl extends ComandoServiceAbstract implements TopService{
+
+    public TopServiceImpl(){
+        this.setTipo(Job.TOP);
+        this.setValidation("-bn([0-9])?");
+    }
+
+    @Override
+    public void executeCommand(String[] args) {
+        String commandLine = String.join(" ", args);
+        procesarLinea(commandLine);
+    }
+}
+```
+
 ##### `PsHeadService.java` e `PsHeadServiceImpl.java`
+
 - **Función**: Maneja la ejecución del comando `ps aux | head` (muestra procesos del sistema con detalles).
 - **Validación**: Acepta parámetros `aux` o `ef`.
 - **Implementación**: Extiende `ComandoServiceAbstract` y valida que el comando comience con "PS".
+
+```java
+@Service
+public class PsHeadServiceImpl extends ComandoServiceAbstract implements PsHeadService {
+    public PsHeadServiceImpl(){
+        this.setTipo(Job.PS);
+        this.setValidation("aux|ef");
+    }
+
+    @Override
+    public void executeCommand(String[] args) {
+        String commandLine = String.join(" ", args);
+        procesarLinea(commandLine);
+    }
+}
+```
 
 ### 4. Clase Abstracta: `ComandoServiceAbstract.java`
 
@@ -73,15 +176,91 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
   - **Multihilo**: Utiliza `ExecutorService` para manejar la lectura de streams de entrada y error concurrentemente.
   - **Timeout**: Espera hasta 5 segundos para la finalización del proceso.
 
+```java
+public abstract class ComandoServiceAbstract {
+    // ... (campos y setters/getters)
+
+    public void procesarLinea(String linea) {
+        String[] arrayComando = linea.split("\\s+");
+        this.setComando(arrayComando[0]);
+        if (!validar(arrayComando)) {
+            return;
+        }
+
+        Process proceso;
+        try {
+            proceso = new ProcessBuilder("sh", "-c", linea).start();
+            ejecutarProceso(proceso);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean ejecutarProceso(Process proceso) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        StringBuilder output = new StringBuilder();
+        StringBuilder errorOutput = new StringBuilder();
+
+        executor.submit(() -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(proceso.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println("[OUT] " + line);
+                    output.append(line).append("\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        executor.submit(() -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(proceso.getErrorStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println("[ERR] " + line);
+                    errorOutput.append(line).append("\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        try {
+            proceso.waitFor();
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String fullOutput = output.toString() + errorOutput.toString();
+        if (fileRepository != null) {
+            fileRepository.saveOutput(this.tipo, fullOutput);
+        }
+
+        return true;
+    }
+
+    // ... (métodos de validación)
+}
+```
+
 ### 5. Dominio: `Job.java`
 
 - **Ubicación**: `src/main/java/com/comandos/domain/Job.java`
 - **Función**: Enumeración que define los tipos de trabajos (comandos) soportados.
 - **Valores**: `LSOF`, `TOP`, `PS`.
 
+```java
+public enum Job {
+    LSOF, TOP, PS
+}
+```
+
 ### 6. Repositorios
 
 #### Interfaz: `IJobRepository.java`
+
 - **Ubicación**: `src/main/java/com/comandos/repositories/interfaces/IJobRepository.java`
 - **Función**: Define el contrato para la persistencia de salidas de comandos.
 - **Métodos**:
@@ -89,6 +268,7 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
   - `boolean saveOutput(Job job, String output)`: Guarda la salida de un comando en un archivo.
 
 #### Implementación: `FileJobRepository.java`
+
 - **Ubicación**: `src/main/java/com/comandos/repositories/file/FileJobRepository.java`
 - **Función**: Implementa la persistencia basada en archivos.
 - **Características**:
@@ -96,6 +276,26 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
   - Ubicación: `src/main/resources/`.
   - Utiliza `Files.write()` con opciones de creación y escritura.
   - Maneja errores de E/S con logging usando SLF4J.
+
+```java
+@Repository
+public class FileJobRepository implements IJobRepository {
+    // ... (campos)
+
+    @Override
+    public boolean saveOutput(Job job, String output) {
+        String fileName = job.toString().toLowerCase() + "_output.txt";
+        Path outputPath = Paths.get("src/main/resources", fileName);
+        try {
+            Files.write(outputPath, output.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            return true;
+        } catch (IOException e) {
+            logger.error("Error saving output to file: " + fileName, e);
+            return false;
+        }
+    }
+}
+```
 
 ## Flujo de Ejecución
 
@@ -119,15 +319,19 @@ La aplicación está estructurada en capas siguiendo principios de diseño orien
 ## Cómo Ejecutar la Aplicación
 
 1. **Compilación**: Asegúrate de tener Maven instalado y ejecuta:
+
    ```
    mvn clean compile
    ```
 
 2. **Ejecución**: Ejecuta la aplicación con Maven:
+
    ```
    mvn spring-boot:run
    ```
+
    O directamente con Java:
+
    ```
    java -jar target/procesos-servicios-consola-1.0.jar
    ```
@@ -156,6 +360,7 @@ La aplicación incluye pruebas unitarias en `src/test/java/com/comandos/controll
 ## Extensibilidad
 
 La arquitectura modular permite agregar fácilmente nuevos comandos:
+
 1. Agregar un nuevo valor al enum `Job`.
 2. Crear una interfaz y implementación de servicio que extienda `CommandService`.
 3. Actualizar `CliControllers` para enrutar el nuevo comando.
