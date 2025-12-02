@@ -1,4 +1,5 @@
 package com.docencia.hilos;
+
 import java.time.LocalTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -6,8 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 public class SpawnsMundoAbierto {
 
+    /**
+     * Clase interna que representa una tarea de spawn de enemigos.
+     * Implementa Runnable para ser ejecutada periódicamente por el scheduler.
+     */
     static class SpawnTarea implements Runnable {
 
+        // Arrays con las zonas y enemigos disponibles para spawns aleatorios
         private final String[] zonas = {
                 "Bosque Maldito",
                 "Ruinas Antiguas",
@@ -24,14 +30,21 @@ public class SpawnsMundoAbierto {
                 "Lich Supremo"
         };
 
+        /**
+         * Método que ejecuta la tarea de spawn.
+         * Selecciona aleatoriamente una zona y un enemigo, y simula el proceso de
+         * spawn.
+         */
         @Override
         public void run() {
             String hilo = Thread.currentThread().getName();
-            String zona = zonas[(int)(Math.random() * zonas.length)];
-            String enemigo = enemigos[(int)(Math.random() * enemigos.length)];
+            // Selecciona una zona y un enemigo aleatoriamente
+            String zona = zonas[(int) (Math.random() * zonas.length)];
+            String enemigo = enemigos[(int) (Math.random() * enemigos.length)];
             System.out.println("[" + LocalTime.now() + "][" + hilo + "] Spawn de " +
                     enemigo + " en " + zona);
-            // Simulamos trabajo que toma tiempo para probar comportamiento si dura más que el período
+            // Simula un trabajo que toma tiempo para probar el comportamiento cuando dura
+            // más que el período
             try {
                 Thread.sleep(2500); // 2.5 segundos, mayor que el período de 2 segundos
             } catch (InterruptedException e) {
